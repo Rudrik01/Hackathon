@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Healthcare Chatbot</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        #chat-container {
+            width: 80%;
+            margin: 50px auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+        }
+
+        #chat-messages {
+            margin-bottom: 10px;
+        }
+
+        #user-input {
+            width: 70%;
+            padding: 5px;
+            margin-right: 5px;
+        }
+
+        #send-button {
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Healthcare Chatbot</h1>
+    <div id="chat-container">
+        <div id="chat-messages">
+            {% for message in messages %}
+                <div class="{{ message.role }}">{{ message.text }}</div>
+            {% endfor %}
+        </div>
+        <input type="text" id="user-input" placeholder="Type your message...">
+        <button id="send-button" onclick="sendMessage()">Send</button>
+    </div>
+
+    <script>
+        function sendMessage() {
+            var userMessage = document.getElementById('user-input').value;
+            appendMessage('You: ' + userMessage, 'user');
+
+            // AJAX request to Flask endpoint for processing the message
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '/process_message', true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                    var modelResponse = JSON.parse(xhr.responseText).model_response;
+                    appendMessage('Bot: ' + modelResponse, 'bot');
+                }
+            };
+            xhr.send(JSON.stringify({ 'user_input': userMessage }));
+        }
+
+        function appendMessage(message, role) {
+            var chatMessages = document.getElementById('chat-messages');
+            var messageDiv = document.createElement('div');
+            messageDiv.textContent = message;
+            messageDiv.className = role;
+            chatMessages.appendChild(messageDiv);
+
+            // Clear the input box after sending the message
+            document.getElementById('user-input').value = '';
+        }
+    </script>
+</body>
+</html>

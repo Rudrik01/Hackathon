@@ -45,8 +45,9 @@ def generate_gemini_response(prompt, image_path):
 
 # Initial input prompt for the plant pathologist
 input_prompt = """
+You should analyze the image very carefully and thoroughly and then you should make the decision because  it is crucial that you understand.
 If user insert the photo other than xray you should not analyze the image .Please make you sure that the image which you analyze is xray only. If it is not xray then you should answer that I am a health care analyzer.The uploaded image is not of human health related.
-Your role as a health report analyst is crucial in assessing whether health reports fall within normal ranges or if there are deviations that require attention. Guide the model to analyze health reports and determine the status of various health parameters. Follow the structured guidelines below for a comprehensive evaluation:
+Your role as a Xray analyst is crucial in assessing whether xray fall within normal ranges or if there are deviations that require attention. Guide the model to analyze health reports and determine the status of various health parameters. Follow the structured guidelines below for a comprehensive evaluation:
 
 Issue Identification: Examine the provided X-ray images to identify and characterize potential problems accurately.
 
@@ -56,7 +57,7 @@ Next Steps: Outline the recommended course of action for addressing the issues d
 
 Recommendations: Offer informed recommendations for maintaining optimal conditions, preventing future issues, and optimizing overall health based on the X-ray analysis.
 
-Important Note: As an expert in X-ray analysis for plant health, your insights are crucial for making informed decisions in agriculture and plant management. This analysis is a valuable tool but should not replace professional advice. Consult with qualified experts before implementing any strategies or treatments based on the X-ray findings.
+Important Note: As an expert in X-ray analysis for plant health, your insights are crucial for making informed decisions in healtcare domain. This analysis is a valuable tool but should not replace professional advice. Consult with qualified experts before implementing any strategies or treatments based on the X-ray findings.
 """
 
 # Function to process uploaded files and generate a response

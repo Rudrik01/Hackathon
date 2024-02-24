@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Healthcare Chatbot</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f8ff; /* Light blue background */
+        }
+
+        #chat-container {
+            width: 80%;
+            margin: 50px auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #ffffff; /* White background for the chat */
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); /* Add some shadow for depth */
+        }
+
+        #chat-messages {
+            margin-bottom: 10px;
+            overflow: auto;
+            max-height: 400px; /* Limit height with overflow */
+        }
+
+        .user, .bot {
+            margin: 5px;
+            padding: 10px;
+            border-radius: 10px;
+            color: #fff; /* White text color */
+            animation: fadeIn 1s ease-out; /* Animation for message entry */
+        }
+
+        .user {
+            background-color: #007bff; /* Blue for user messages */
+            align-self: flex-end;
+            margin-right: 20px;
+        }
+
+        .bot {
+            background-color: #28a745; /* Green for bot messages */
+            align-self: flex-start;
+            margin-left: 20px;
+        }
+
+        #user-input {
+            width: 70%;
+            padding: 5px;
+            margin-right: 5px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        #send-button {
+            padding: 5px 10px;
+            cursor: pointer;
+            background-color: #007bff; /* Blue background */
+            color: #fff; /* White text */
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+        }
+
+        #send-button:hover {
+            background-color: #0056b3; /* Darker blue on hover */
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <h1>Healthcare Chatbot</h1>
+    <div id="chat-container">
+        <div id="chat-messages">
+            {% for message in messages %}
+                <div class="{{ message.role }}">{{ message.text }}</div>
+            {% endfor %}
+        </div>
+        <input type="text" id="user-input" placeholder="Type your message...">
+        <button id="send-button" onclick="sendMessage()">Send</button>
+    </div>
+
+    <script>
+        function sendMessage() {
+            var userMessage = document.getElementById('user-input').value;
+            appendMessage('You: ' + userMessage, 'user');
+
+            // AJAX request to Flask endpoint for processing the message
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '/process_message', true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                    var modelResponse = JSON.parse(xhr.responseText).model_response;
+                    appendMessage('Bot: ' + modelResponse, 'bot');
+                }
+            };
+            xhr.send(JSON.stringify({ 'user_input': userMessage }));
+        }
+
+        function appendMessage(message, role) {
+            var chatMessages = document.getElementById('chat-messages');
+            var messageDiv = document.createElement('div');
+            messageDiv.textContent = message;
+            messageDiv.className = role;
+            chatMessages.appendChild(messageDiv);
+
+            // Clear the input box after sending the message
+            document.getElementById('user-input').value = '';
+        }
+    </script>
+</body>
+</html>
